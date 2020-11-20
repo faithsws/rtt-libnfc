@@ -32,7 +32,7 @@
 #ifndef __NFC_EMULATION_H__
 #define __NFC_EMULATION_H__
 
-#include <sys/types.h>
+//#include <sys/types.h>
 #include <nfc/nfc.h>
 
 #ifdef __cplusplus

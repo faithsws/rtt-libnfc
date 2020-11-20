@@ -33,14 +33,19 @@
 void
 log_vput_internal(const char *format, va_list args)
 {
-  vfprintf(stderr, format, args);
+//  vfprintf(stderr, format, args);
+	char buffer[256] = {0};
+	 vsprintf(buffer,format,args);
+	rt_kprintf(buffer);
 }
 
 void
 log_put_internal(const char *format, ...)
 {
+	char buffer[256] = {0};
   va_list va;
   va_start(va, format);
-  vfprintf(stderr, format, va);
+	vsprintf(buffer,format, va);
+  rt_kprintf(buffer);
   va_end(va);
 }

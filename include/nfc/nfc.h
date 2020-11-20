@@ -37,6 +37,11 @@
 #  include <stdint.h>
 #  include <stdbool.h>
 
+#ifdef malloc
+#undef malloc
+#define malloc (void*)rt_malloc
+#endif
+
 #  ifdef _WIN32
 /* Windows platform */
 #    ifndef _WINDLL

@@ -75,6 +75,11 @@ void *pn53x_current_target_new(const struct nfc_device *pnd, const nfc_target *p
 void pn53x_current_target_free(const struct nfc_device *pnd);
 bool pn53x_current_target_is(const struct nfc_device *pnd, const nfc_target *pnt);
 
+#ifdef RTT_LIBNFC
+#include <rtthread.h>
+#define malloc (void*)rt_malloc
+#define free rt_free
+#endif
 /* implementations */
 int
 pn53x_init(struct nfc_device *pnd)

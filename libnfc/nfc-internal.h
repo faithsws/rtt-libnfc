@@ -33,7 +33,7 @@
 #define __NFC_INTERNAL_H__
 
 #include <stdbool.h>
-#include <err.h>
+//#include <err.h>
 #if !defined(_MSC_VER)
 #  include <sys/time.h>
 #endif
@@ -226,5 +226,6 @@ void iso14443_cascade_uid(const uint8_t abtUID[], const size_t szUID, uint8_t *p
 void prepare_initiator_data(const nfc_modulation nm, uint8_t **ppbtInitiatorData, size_t *pszInitiatorData);
 
 int connstring_decode(const nfc_connstring connstring, const char *driver_name, const char *bus_name, char **pparam1, char **pparam2);
+
 
 #endif // __NFC_INTERNAL_H__

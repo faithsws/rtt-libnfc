@@ -75,7 +75,7 @@
 #  include "config.h"
 #endif // HAVE_CONFIG_H
 
-#include <fcntl.h>
+//#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -131,7 +131,11 @@
 
 #define LOG_CATEGORY "libnfc.general"
 #define LOG_GROUP    NFC_LOG_GROUP_GENERAL
-
+#ifdef RTT_LIBNFC
+#include <rtthread.h>
+#define malloc (void*)rt_malloc
+#define free rt_free
+#endif
 struct nfc_driver_list {
   const struct nfc_driver_list *next;
   const struct nfc_driver *driver;
@@ -1188,7 +1192,11 @@ nfc_strerror_r(const nfc_device *pnd, char *pcStrErrBuf, size_t szBufLen)
 void
 nfc_perror(const nfc_device *pnd, const char *pcString)
 {
-  fprintf(stderr, "%s: %s\n", pcString, nfc_strerror(pnd));
+#ifdef RTT_LIBNFC
+  rt_kprintf("%s: %s\n", pcString, nfc_strerror(pnd));
+#else
+	fprintf(stderr, "%s: %s\n", pcString, nfc_strerror(pnd));
+#endif
 }
 
 /** @ingroup error
@@ -1321,6 +1329,7 @@ nfc_device_validate_modulation(nfc_device *pnd, const nfc_mode mode, const nfc_m
  *
  * @param pnd \a nfc_device struct pointer that represent currently used device
  */
+#define PACKAGE_VERSION "1.6"
 const char *
 nfc_version(void)
 {

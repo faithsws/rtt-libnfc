@@ -48,6 +48,12 @@
 #define LOG_GROUP    NFC_LOG_GROUP_GENERAL
 #define LOG_CATEGORY "libnfc.general"
 
+#ifdef RTT_LIBNFC
+#include <rtthread.h>
+#define malloc (void*)rt_malloc
+#define free rt_free
+#endif
+
 void
 string_as_boolean(const char *s, bool *value)
 {

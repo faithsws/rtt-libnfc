@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <string.h>
-#include <unistd.h>
+//#include <unistd.h>
 
 #include <nfc/nfc.h>
 
@@ -70,7 +70,11 @@ int     pn532_uart_ack(nfc_device *pnd);
 int     pn532_uart_wakeup(nfc_device *pnd);
 
 #define DRIVER_DATA(pnd) ((struct pn532_uart_data*)(pnd->driver_data))
-
+#ifdef RTT_LIBNFC
+#include <rtthread.h>
+#define malloc (void*)rt_malloc
+#define free rt_free
+#endif
 static size_t
 pn532_uart_scan(const nfc_context *context, nfc_connstring connstrings[], const size_t connstrings_len)
 {
@@ -135,7 +139,9 @@ pn532_uart_scan(const nfc_context *context, nfc_connstring connstrings[], const 
       // This device starts in LowVBat power mode
       CHIP_DATA(pnd)->power_mode = LOWVBAT;
 
-#ifndef WIN32
+	  
+#ifndef WIN32 
+#ifndef RTT_LIBNFC
       // pipe-based abort mechanism
       if (pipe(DRIVER_DATA(pnd)->iAbortFds) < 0) {
         uart_close(DRIVER_DATA(pnd)->port);
@@ -148,6 +154,7 @@ pn532_uart_scan(const nfc_context *context, nfc_connstring connstrings[], const 
         free(acPorts);
         return 0;
       }
+#endif
 #else
       DRIVER_DATA(pnd)->abort_flag = false;
 #endif
@@ -277,6 +284,7 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
   pnd->driver = &pn532_uart_driver;
 
 #ifndef WIN32
+  #ifndef RTT_LIBNFC
   // pipe-based abort mechanism
   if (pipe(DRIVER_DATA(pnd)->iAbortFds) < 0) {
     uart_close(DRIVER_DATA(pnd)->port);
@@ -284,6 +292,7 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
     nfc_device_free(pnd);
     return NULL;
   }
+#endif
 #else
   DRIVER_DATA(pnd)->abort_flag = false;
 #endif
@@ -515,10 +524,12 @@ pn532_uart_abort_command(nfc_device *pnd)
 {
   if (pnd) {
 #ifndef WIN32
+	  #ifndef RTT_LIBNFC
     close(DRIVER_DATA(pnd)->iAbortFds[0]);
     if (pipe(DRIVER_DATA(pnd)->iAbortFds) < 0) {
       return NFC_ESOFT;
     }
+#endif
 #else
     DRIVER_DATA(pnd)->abort_flag = true;
 #endif

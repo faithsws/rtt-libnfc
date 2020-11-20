@@ -31,7 +31,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <fcntl.h>
+//#include <fcntl.h>
 
 const char *
 log_priority_to_str(const int priority)
@@ -53,7 +53,7 @@ log_priority_to_str(const int priority)
 #ifdef LOG
 
 #include "log-internal.h"
-
+#define DEBUG
 void
 log_init(const nfc_context *context)
 {

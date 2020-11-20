@@ -32,7 +32,7 @@
 #endif // HAVE_CONFIG_H
 
 #include <stdarg.h>
-
+#define log_rtt_put(group, category, priority, format, ...) rt_kprintf(format,__VA_ARGS__)
 // Internal methods so different platforms can route the logging
 // Offering both forms of the variadic function
 // These are implemented in the log_<platform> specific file

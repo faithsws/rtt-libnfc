@@ -37,7 +37,11 @@
 #endif // HAVE_CONFIG_H
 
 #include "nfc-internal.h"
-
+#ifdef RTT_LIBNFC
+#include <rtthread.h>
+#define malloc (void*)rt_malloc
+#define free rt_free
+#endif
 nfc_device *
 nfc_device_new(const nfc_context *context, const nfc_connstring connstring)
 {

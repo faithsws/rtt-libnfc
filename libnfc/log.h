@@ -30,7 +30,7 @@
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif // HAVE_CONFIG_H
-
+#define LOG
 #include "nfc-internal.h"
 
 #define NFC_LOG_PRIORITY_NONE   0
@@ -92,12 +92,16 @@ __attribute__((format(printf, 4, 5)))
  * Max values:  pcTag of 121 bytes + ": " + 300 bytes of data+ "\0" => acBuf of 1024 bytes
  */
 #  ifdef LOG
+
+#ifdef RTT_LIBNFC
+#include "ulog.h"
+#define LOG_HEX(group, pcTag, pbtData, szBytes) ulog_hex(pcTag, 16, (rt_uint8_t*)pbtData, szBytes)
+#else
 #    define LOG_HEX(group, pcTag, pbtData, szBytes) do { \
     size_t	 __szPos; \
     char	 __acBuf[1024]; \
     size_t	 __szBuf = 0; \
     if ((int)szBytes < 0) { \
-      fprintf (stderr, "%s:%d: Attempt to print %d bytes!\n", __FILE__, __LINE__, (int)szBytes); \
       log_put (group, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s:%d: Attempt to print %d bytes!\n", __FILE__, __LINE__, (int)szBytes); \
       abort(); \
       break; \
@@ -110,6 +114,7 @@ __attribute__((format(printf, 4, 5)))
     } \
     log_put (group, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", __acBuf); \
   } while (0);
+#endif //RTT_LIBNFC
 #  else
 #    define LOG_HEX(group, pcTag, pbtData, szBytes) do { \
     (void) group; \
